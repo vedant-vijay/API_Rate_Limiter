@@ -1,4 +1,3 @@
-// routes/clientRoutes.js
 const express = require('express');
 const Client = require('../models/Client');
 const crypto = require('crypto');
@@ -11,7 +10,6 @@ const generateApiKey = () => {
   return crypto.randomBytes(32).toString('hex');
 };
 
-// Create client (protected)
 router.post('/', auth, async (req, res) => {
   try {
     const { name, rateLimit } = req.body;
@@ -36,7 +34,6 @@ router.post('/', auth, async (req, res) => {
       rateLimit: client.rateLimit
     });
   } catch (error) {
-    console.error("Create client error:", error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -66,7 +63,6 @@ router.post('/:id/regenerate', auth, async (req, res) => {
       newApiKey: newKey
     });
   } catch (error) {
-    console.error('Regenerate error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -94,7 +90,6 @@ router.get('/', auth, async (req, res) => {
 
     res.json(clientsWithUsage);
   } catch (error) {
-    console.error('Fetch clients error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -126,7 +121,6 @@ router.get('/:id/usage', auth, async (req, res) => {
       remainingRequests: Math.max(client.rateLimit - usage.count, 0)
     });
   } catch (error) {
-    console.error('Client usage error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -151,7 +145,6 @@ router.delete('/:id', auth, async (req, res) => {
       clientId: id
     });
   } catch (error) {
-    console.error('Delete client error:', error.message);
     res.status(500).json({ message: 'Server error' });
   }
 });
