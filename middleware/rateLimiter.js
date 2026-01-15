@@ -78,7 +78,6 @@ const rateLimiter = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error('Rate limiter error:', error);
     res.status(500).json({ 
       error: 'Internal server error',
       message: 'An error occurred while processing your request'
