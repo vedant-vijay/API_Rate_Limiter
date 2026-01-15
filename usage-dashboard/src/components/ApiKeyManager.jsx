@@ -46,7 +46,6 @@ export default function ApiKeyManager() {
         setLastRefresh(new Date());
       }
     } catch (err) {
-      console.error('Error fetching clients:', err);
     } finally {
       if (!silent) {
         setLoading(false);
