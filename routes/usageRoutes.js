@@ -44,7 +44,6 @@ router.get('/:apiKey', async (req, res) => {
       windowEnd
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 });
