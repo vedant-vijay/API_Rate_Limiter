@@ -1,4 +1,3 @@
-// routes/testRoutes.js
 const express = require('express');
 const rateLimiter = require('../middleware/rateLimiter');
 const serviceController = require('../controllers/serviceController');
