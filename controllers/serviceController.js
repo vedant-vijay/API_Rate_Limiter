@@ -23,7 +23,6 @@ exports.getWeather = async (req, res) => {
       windSpeed: response.data.wind.speed
     });
   } catch (error) {
-    console.error('Weather API error:', error.message);
     res.status(500).json({ error: 'Failed to fetch weather data' });
   }
 };
@@ -38,7 +37,6 @@ exports.getQuote = async (req, res) => {
       author: response.data[0].a
     });
   } catch (error) {
-    console.error('Quote API error:', error.message);
     res.status(500).json({ error: 'Failed to fetch quote' });
   }
 };
@@ -53,7 +51,6 @@ exports.getDogImage = async (req, res) => {
       status: response.data.status
     });
   } catch (error) {
-    console.error('Dog API error:', error.message);
     res.status(500).json({ error: 'Failed to fetch dog image' });
   }
 };
@@ -68,7 +65,6 @@ exports.getCatFact = async (req, res) => {
       length: response.data.length
     });
   } catch (error) {
-    console.error('Cat Fact API error:', error.message);
     res.status(500).json({ error: 'Failed to fetch cat fact' });
   }
 };
@@ -86,7 +82,6 @@ exports.getRandomUser = async (req, res) => {
       picture: user.picture.large
     });
   } catch (error) {
-    console.error('Random User API error:', error.message);
     res.status(500).json({ error: 'Failed to fetch random user' });
   }
 };
@@ -105,7 +100,6 @@ exports.getJoke = async (req, res) => {
       category: response.data.category
     });
   } catch (error) {
-    console.error('Joke API error:', error.message);
     res.status(500).json({ error: 'Failed to fetch joke' });
   }
 };
@@ -130,7 +124,6 @@ exports.getCryptoPrice = async (req, res) => {
       change24h: response.data[coin].usd_24h_change?.toFixed(2) + '%'
     });
   } catch (error) {
-    console.error('Crypto API error:', error.message);
     res.status(500).json({ error: 'Failed to fetch crypto price' });
   }
 };
@@ -155,7 +148,6 @@ exports.getIPInfo = async (req, res) => {
       currency: response.data.currency
     });
   } catch (error) {
-    console.error('IP API error:', error.message);
     res.status(500).json({ error: 'Failed to fetch IP information' });
   }
 };
