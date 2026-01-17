@@ -180,7 +180,7 @@ export default function ApiTester() {
           </div>
         </div>
 
-        {/* Right Panel - Results */}
+        
         <div style={styles.resultsPanel}>
           {rateLimitInfo && (
             <div style={styles.rateLimitCard}>
