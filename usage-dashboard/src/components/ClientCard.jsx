@@ -7,6 +7,7 @@ export default function ClientCard({ client, onRefresh }) {
   const [copied, setCopied] = useState(false);
   const [prevRequestCount, setPrevRequestCount] = useState(client.requestCount || 0);
   const [isUpdating, setIsUpdating] = useState(false);
+  const API = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     console.log(`🔄 ClientCard Update - ${client.name}:`, {
@@ -35,7 +36,7 @@ export default function ClientCard({ client, onRefresh }) {
     
     setDeleting(true);
     try {
-      const res = await fetch(`http://localhost:3000/api/clients/${client._id}`, {
+      const res = await fetch(`${API}/api/clients/${client._id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

@@ -7,6 +7,7 @@ export default function Auth({ onLogin }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const API = import.meta.env.VITE_API_BASE_URL;
 
   const handleSubmit = async () => {
     if (!email || !password) {
@@ -23,7 +24,7 @@ export default function Auth({ onLogin }) {
 
     try {
       const endpoint = isLogin ? '/api/auth/login' : '/api/auth/signup';
-      const res = await fetch(`http://localhost:3000${endpoint}`, {
+      const res = await fetch(`${API}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })

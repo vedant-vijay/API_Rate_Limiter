@@ -10,6 +10,7 @@ export default function ApiTester() {
   const [error, setError] = useState('');
   const [rateLimitInfo, setRateLimitInfo] = useState(null);
   const [responseTime, setResponseTime] = useState(null);
+  const API = import.meta.env.VITE_API_BASE_URL;
 
   const services = [
     { value: 'status', label: 'API Status Check', params: [], description: 'Check if the API is running' },
@@ -41,7 +42,7 @@ export default function ApiTester() {
 
     try {
       const queryParams = new URLSearchParams(params).toString();
-      const url = `http://localhost:3000/api/test/${service}${queryParams ? '?' + queryParams : ''}`;
+      const url = `${API}/api/test/${service}${queryParams ? '?' + queryParams : ''}`;
 
       const res = await fetch(url, {
         headers: { 'X-API-Key': apiKey }

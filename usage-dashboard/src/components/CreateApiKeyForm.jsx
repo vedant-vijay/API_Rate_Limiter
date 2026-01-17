@@ -8,6 +8,7 @@ export default function CreateApiKeyForm({ onSuccess, onCancel }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+  const API = import.meta.env.VITE_API_BASE_URL;
 
   const handleSubmit = async () => {
     if (!name || !rateLimit) {
@@ -24,7 +25,7 @@ export default function CreateApiKeyForm({ onSuccess, onCancel }) {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:3000/api/clients', {
+      const res = await fetch(`${API}/api/clients`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

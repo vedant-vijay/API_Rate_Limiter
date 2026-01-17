@@ -10,6 +10,7 @@ export default function ApiKeyManager() {
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(null);
   const refreshIntervalRef = useRef(null);
+  const API = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     fetchClients();
@@ -35,7 +36,7 @@ export default function ApiKeyManager() {
         setLoading(true);
       }
       
-      const res = await fetch('http://localhost:3000/api/clients', {
+      const res = await fetch(`${API}/api/clients`, {
         headers: getAuthHeader(),
         cache: 'no-store' 
       });
