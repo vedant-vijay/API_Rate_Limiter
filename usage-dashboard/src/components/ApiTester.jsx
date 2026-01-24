@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { TestTube, BarChart3, Play, Loader } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { TestTube, BarChart3, Play, Loader, ChevronDown } from 'lucide-react';
 
 export default function ApiTester() {
   const [apiKey, setApiKey] = useState('');
@@ -11,6 +11,31 @@ export default function ApiTester() {
   const [rateLimitInfo, setRateLimitInfo] = useState(null);
   const [responseTime, setResponseTime] = useState(null);
   const API = import.meta.env.VITE_API_BASE_URL;
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 480);
+  const [isTablet, setIsTablet] = useState(window.innerWidth < 1024);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [hoveredOption, setHoveredOption] = useState(null);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 480);
+      setIsTablet(window.innerWidth < 1024);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const services = [
     { value: 'status', label: 'API Status Check', params: [], description: 'Check if the API is running' },
@@ -85,6 +110,325 @@ export default function ApiTester() {
     }
   };
 
+  const styles = {
+    section: {
+      animation: 'fadeIn 0.6s ease'
+    },
+    sectionHeader: {
+      marginBottom: '2rem'
+    },
+    sectionTitle: {
+      fontSize: '2rem',
+      fontWeight: 'bold',
+      margin: '0 0 0.5rem 0',
+      background: 'linear-gradient(135deg, #e5e7eb 0%, #9ca3af 100%)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent'
+    },
+    sectionSubtitle: {
+      color: '#6b7280',
+      margin: 0,
+      fontSize: '0.95rem'
+    },
+    testerContainer: {
+      display: 'grid',
+      gridTemplateColumns: isTablet || isMobile ? '1fr' : 'repeat(auto-fit, minmax(450px, 1fr))',
+      gap: '2rem',
+      alignItems: 'start'
+    },
+    testerForm: {
+      backgroundColor: '#1a1a1a',
+      border: '1px solid #2d2d2d',
+      borderRadius: '16px',
+      padding: isMobile ? '1rem' : '2rem',
+      position: isTablet || isMobile ? 'relative' : 'sticky',
+      top: isTablet || isMobile ? 'auto' : '100px'
+    },
+    formSection: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1.5rem'
+    },
+    formSectionTitle: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.75rem',
+      fontSize: '1.25rem',
+      fontWeight: '600',
+      color: '#e5e7eb',
+      margin: 0,
+      paddingBottom: '1rem',
+      borderBottom: '1px solid #2d2d2d'
+    },
+    inputGroup: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.5rem'
+    },
+    label: {
+      fontSize: '0.875rem',
+      fontWeight: '600',
+      color: '#9ca3af',
+      textTransform: 'uppercase',
+      letterSpacing: '0.05em'
+    },
+    input: {
+      width: '100%',
+      padding: '0.875rem',
+      backgroundColor: '#0a0a0a',
+      border: '1px solid #2d2d2d',
+      borderRadius: '8px',
+      fontSize: '0.875rem',
+      color: '#e5e7eb',
+      boxSizing: 'border-box',
+      transition: 'all 0.3s ease',
+      outline: 'none'
+    },
+    customSelectWrapper: {
+      position: 'relative',
+      width: '100%'
+    },
+    customSelectTrigger: {
+      width: '100%',
+      padding: '0.875rem',
+      backgroundColor: '#0a0a0a',
+      border: '1px solid #2d2d2d',
+      borderRadius: '8px',
+      fontSize: isMobile ? '0.75rem' : '0.875rem',
+      color: '#e5e7eb',
+      boxSizing: 'border-box',
+      cursor: 'pointer',
+      outline: 'none',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      transition: 'all 0.3s ease'
+    },
+    customSelectDropdown: {
+      position: 'absolute',
+      top: 'calc(100% + 0.5rem)',
+      left: 0,
+      right: 0,
+      backgroundColor: '#0a0a0a',
+      border: '1px solid #2d2d2d',
+      borderRadius: '8px',
+      maxHeight: '300px',
+      overflowY: 'auto',
+      zIndex: 1000,
+      boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)'
+    },
+    customSelectOption: {
+      padding: '0.875rem',
+      fontSize: isMobile ? '0.75rem' : '0.875rem',
+      color: '#e5e7eb',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease',
+      borderBottom: '1px solid #1a1a1a'
+    },
+    customSelectOptionHover: {
+      backgroundColor: '#1a1a1a',
+      color: '#6366f1'
+    },
+    customSelectArrow: {
+      transition: 'transform 0.3s ease',
+      display: 'flex',
+      alignItems: 'center'
+    },
+    hint: {
+      fontSize: '0.75rem',
+      color: '#6b7280',
+      fontStyle: 'italic'
+    },
+    paramsSection: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.75rem'
+    },
+    paramInput: {
+      display: 'flex',
+      flexDirection: 'column'
+    },
+    testBtn: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '0.75rem',
+      width: '100%',
+      padding: '1rem',
+      background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+      color: 'white',
+      border: 'none',
+      borderRadius: '8px',
+      cursor: 'pointer',
+      fontSize: '1rem',
+      fontWeight: '600',
+      marginTop: '0.5rem',
+      transition: 'all 0.3s ease',
+      boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
+    },
+    resultsPanel: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1.5rem'
+    },
+    rateLimitCard: {
+      backgroundColor: '#1a1a1a',
+      border: '1px solid rgba(99, 102, 241, 0.3)',
+      borderRadius: '12px',
+      padding: '1.5rem',
+      animation: 'slideDown 0.3s ease'
+    },
+    cardTitle: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      fontSize: '1.1rem',
+      fontWeight: '600',
+      margin: '0 0 1rem 0',
+      color: '#e5e7eb'
+    },
+    rateLimitGrid: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(140px, 1fr))',
+      gap: '1rem'
+    },
+    rateLimitItem: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.5rem',
+      padding: '1rem',
+      backgroundColor: 'rgba(99, 102, 241, 0.05)',
+      borderRadius: '8px',
+      border: '1px solid rgba(99, 102, 241, 0.1)'
+    },
+    rateLimitLabel: {
+      fontSize: '0.7rem',
+      color: '#9ca3af',
+      textTransform: 'uppercase',
+      fontWeight: '600',
+      letterSpacing: '0.05em'
+    },
+    rateLimitValue: {
+      fontSize: '1.75rem',
+      fontWeight: '700',
+      color: '#6366f1',
+      fontFamily: 'monospace'
+    },
+    rateLimitProgress: {
+      marginTop: '1rem'
+    },
+    progressBar: {
+      height: '8px',
+      backgroundColor: '#0a0a0a',
+      borderRadius: '4px',
+      overflow: 'hidden',
+      border: '1px solid #2d2d2d'
+    },
+    progressFill: {
+      height: '100%',
+      transition: 'width 0.5s ease, background-color 0.3s ease',
+      borderRadius: '3px'
+    },
+    errorCard: {
+      padding: '1.5rem',
+      backgroundColor: 'rgba(239, 68, 68, 0.1)',
+      border: '1px solid rgba(239, 68, 68, 0.3)',
+      borderRadius: '12px',
+      animation: 'slideDown 0.3s ease'
+    },
+    errorHeader: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.75rem',
+      marginBottom: '0.75rem'
+    },
+    errorIcon: {
+      fontSize: '1.5rem'
+    },
+    errorTitle: {
+      color: '#ef4444',
+      fontSize: '1.1rem'
+    },
+    errorText: {
+      margin: 0,
+      fontSize: '0.875rem',
+      color: '#fca5a5',
+      lineHeight: 1.6
+    },
+    responseCard: {
+      backgroundColor: '#1a1a1a',
+      border: '1px solid #2d2d2d',
+      borderRadius: '12px',
+      padding: '1.5rem',
+      animation: 'slideDown 0.3s ease'
+    },
+    responseHeader: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '1rem'
+    },
+    responseBadge: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '0.5rem 1rem',
+      backgroundColor: 'rgba(16, 185, 129, 0.1)',
+      color: '#10b981',
+      borderRadius: '6px',
+      fontSize: '0.875rem',
+      fontWeight: '600',
+      border: '1px solid rgba(16, 185, 129, 0.3)'
+    },
+    statusDot: {
+      width: '8px',
+      height: '8px',
+      borderRadius: '50%',
+      backgroundColor: '#10b981',
+      animation: 'pulse 2s ease-in-out infinite'
+    },
+    jsonResponse: {
+      backgroundColor: '#0a0a0a',
+      borderRadius: '8px',
+      fontFamily: 'monospace',
+      color: '#10b981',
+      overflow: 'auto',
+      margin: 0,
+      border: '1px solid #1f1f1f',
+      lineHeight: 1.6,
+      fontSize: isMobile ? '0.7rem' : '0.8rem',
+      padding: isMobile ? '1rem' : '1.25rem',
+      maxHeight: isMobile ? '350px' : '500px',
+      whiteSpace: 'pre-wrap',
+      wordBreak: 'break-word',
+      overflowWrap: 'break-word'
+    },
+    placeholderCard: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '4rem 2rem',
+      textAlign: 'center',
+      backgroundColor: '#1a1a1a',
+      border: '2px dashed #2d2d2d',
+      borderRadius: '16px',
+      minHeight: '400px'
+    },
+    placeholderTitle: {
+      fontSize: '1.5rem',
+      fontWeight: '600',
+      margin: '1rem 0 0.5rem 0',
+      color: '#e5e7eb'
+    },
+    placeholderText: {
+      color: '#6b7280',
+      margin: 0,
+      maxWidth: '400px',
+      lineHeight: 1.6
+    }
+  };
+
   return (
     <div style={styles.section}>
       <div style={styles.sectionHeader}>
@@ -120,21 +464,47 @@ export default function ApiTester() {
 
             <div style={styles.inputGroup}>
               <label style={styles.label}>Select Service</label>
-              <select 
-                value={service} 
-                onChange={(e) => {
-                  setService(e.target.value);
-                  setParams({});
-                  setResponse(null);
-                  setError('');
-                  setRateLimitInfo(null);
-                }}
-                style={styles.select}
-              >
-                {services.map(s => (
-                  <option key={s.value} value={s.value}>{s.label}</option>
-                ))}
-              </select>
+              <div ref={dropdownRef} style={styles.customSelectWrapper}>
+                <div 
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  style={styles.customSelectTrigger}
+                >
+                  <span>{selectedService?.label || 'Select a service'}</span>
+                  <span style={{
+                    ...styles.customSelectArrow,
+                    transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                  }}>
+                    <ChevronDown size={20} />
+                  </span>
+                </div>
+                
+                {isDropdownOpen && (
+                  <div style={styles.customSelectDropdown}>
+                    {services.map(s => (
+                      <div
+                        key={s.value}
+                        onClick={() => {
+                          setService(s.value);
+                          setParams({});
+                          setResponse(null);
+                          setError('');
+                          setRateLimitInfo(null);
+                          setIsDropdownOpen(false);
+                        }}
+                        onMouseEnter={() => setHoveredOption(s.value)}
+                        onMouseLeave={() => setHoveredOption(null)}
+                        style={{
+                          ...styles.customSelectOption,
+                          ...(hoveredOption === s.value ? styles.customSelectOptionHover : {}),
+                          ...(s.value === service ? { backgroundColor: '#1a1a1a', color: '#6366f1' } : {})
+                        }}
+                      >
+                        {s.label}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
               {selectedService && (
                 <span style={styles.hint}>{selectedService.description}</span>
               )}
@@ -181,7 +551,7 @@ export default function ApiTester() {
           </div>
         </div>
 
-        
+        {/* Right Panel - Results */}
         <div style={styles.resultsPanel}>
           {rateLimitInfo && (
             <div style={styles.rateLimitCard}>
@@ -274,281 +644,3 @@ export default function ApiTester() {
     </div>
   );
 }
-
-const styles = {
-  section: {
-    animation: 'fadeIn 0.6s ease'
-  },
-  sectionHeader: {
-    marginBottom: '2rem'
-  },
-  sectionTitle: {
-    fontSize: '2rem',
-    fontWeight: 'bold',
-    margin: '0 0 0.5rem 0',
-    background: 'linear-gradient(135deg, #e5e7eb 0%, #9ca3af 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent'
-  },
-  sectionSubtitle: {
-    color: '#6b7280',
-    margin: 0,
-    fontSize: '0.95rem'
-  },
-  testerContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))',
-    gap: '2rem',
-    alignItems: 'start'
-  },
-  testerForm: {
-    backgroundColor: '#1a1a1a',
-    border: '1px solid #2d2d2d',
-    borderRadius: '16px',
-    padding: '2rem',
-    position: 'sticky',
-    top: '100px'
-  },
-  formSection: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.5rem'
-  },
-  formSectionTitle: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-    fontSize: '1.25rem',
-    fontWeight: '600',
-    color: '#e5e7eb',
-    margin: 0,
-    paddingBottom: '1rem',
-    borderBottom: '1px solid #2d2d2d'
-  },
-  inputGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem'
-  },
-  label: {
-    fontSize: '0.875rem',
-    fontWeight: '600',
-    color: '#9ca3af',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em'
-  },
-  input: {
-    width: '100%',
-    padding: '0.875rem',
-    backgroundColor: '#0a0a0a',
-    border: '1px solid #2d2d2d',
-    borderRadius: '8px',
-    fontSize: '0.875rem',
-    color: '#e5e7eb',
-    boxSizing: 'border-box',
-    transition: 'all 0.3s ease',
-    outline: 'none'
-  },
-  select: {
-    width: '100%',
-    padding: '0.875rem',
-    backgroundColor: '#0a0a0a',
-    border: '1px solid #2d2d2d',
-    borderRadius: '8px',
-    fontSize: '0.875rem',
-    color: '#e5e7eb',
-    boxSizing: 'border-box',
-    cursor: 'pointer',
-    outline: 'none'
-  },
-  hint: {
-    fontSize: '0.75rem',
-    color: '#6b7280',
-    fontStyle: 'italic'
-  },
-  paramsSection: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.75rem'
-  },
-  paramInput: {
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  testBtn: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.75rem',
-    width: '100%',
-    padding: '1rem',
-    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '1rem',
-    fontWeight: '600',
-    marginTop: '0.5rem',
-    transition: 'all 0.3s ease',
-    boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
-  },
-  resultsPanel: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.5rem'
-  },
-  rateLimitCard: {
-    backgroundColor: '#1a1a1a',
-    border: '1px solid rgba(99, 102, 241, 0.3)',
-    borderRadius: '12px',
-    padding: '1.5rem',
-    animation: 'slideDown 0.3s ease'
-  },
-  cardTitle: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    fontSize: '1.1rem',
-    fontWeight: '600',
-    margin: '0 0 1rem 0',
-    color: '#e5e7eb'
-  },
-  rateLimitGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-    gap: '1rem'
-  },
-  rateLimitItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-    padding: '1rem',
-    backgroundColor: 'rgba(99, 102, 241, 0.05)',
-    borderRadius: '8px',
-    border: '1px solid rgba(99, 102, 241, 0.1)'
-  },
-  rateLimitLabel: {
-    fontSize: '0.7rem',
-    color: '#9ca3af',
-    textTransform: 'uppercase',
-    fontWeight: '600',
-    letterSpacing: '0.05em'
-  },
-  rateLimitValue: {
-    fontSize: '1.75rem',
-    fontWeight: '700',
-    color: '#6366f1',
-    fontFamily: 'monospace'
-  },
-  rateLimitProgress: {
-    marginTop: '1rem'
-  },
-  progressBar: {
-    height: '8px',
-    backgroundColor: '#0a0a0a',
-    borderRadius: '4px',
-    overflow: 'hidden',
-    border: '1px solid #2d2d2d'
-  },
-  progressFill: {
-    height: '100%',
-    transition: 'width 0.5s ease, background-color 0.3s ease',
-    borderRadius: '3px'
-  },
-  errorCard: {
-    padding: '1.5rem',
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-    border: '1px solid rgba(239, 68, 68, 0.3)',
-    borderRadius: '12px',
-    animation: 'slideDown 0.3s ease'
-  },
-  errorHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-    marginBottom: '0.75rem'
-  },
-  errorIcon: {
-    fontSize: '1.5rem'
-  },
-  errorTitle: {
-    color: '#ef4444',
-    fontSize: '1.1rem'
-  },
-  errorText: {
-    margin: 0,
-    fontSize: '0.875rem',
-    color: '#fca5a5',
-    lineHeight: 1.6
-  },
-  responseCard: {
-    backgroundColor: '#1a1a1a',
-    border: '1px solid #2d2d2d',
-    borderRadius: '12px',
-    padding: '1.5rem',
-    animation: 'slideDown 0.3s ease'
-  },
-  responseHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '1rem'
-  },
-  responseBadge: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    padding: '0.5rem 1rem',
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-    color: '#10b981',
-    borderRadius: '6px',
-    fontSize: '0.875rem',
-    fontWeight: '600',
-    border: '1px solid rgba(16, 185, 129, 0.3)'
-  },
-  statusDot: {
-    width: '8px',
-    height: '8px',
-    borderRadius: '50%',
-    backgroundColor: '#10b981',
-    animation: 'pulse 2s ease-in-out infinite'
-  },
-  jsonResponse: {
-    backgroundColor: '#0a0a0a',
-    padding: '1.25rem',
-    borderRadius: '8px',
-    fontSize: '0.8rem',
-    fontFamily: 'monospace',
-    color: '#10b981',
-    overflow: 'auto',
-    maxHeight: '500px',
-    margin: 0,
-    border: '1px solid #1f1f1f',
-    lineHeight: 1.6
-  },
-  placeholderCard: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '4rem 2rem',
-    textAlign: 'center',
-    backgroundColor: '#1a1a1a',
-    border: '2px dashed #2d2d2d',
-    borderRadius: '16px',
-    minHeight: '400px'
-  },
-  placeholderTitle: {
-    fontSize: '1.5rem',
-    fontWeight: '600',
-    margin: '1rem 0 0.5rem 0',
-    color: '#e5e7eb'
-  },
-  placeholderText: {
-    color: '#6b7280',
-    margin: 0,
-    maxWidth: '400px',
-    lineHeight: 1.6
-  }
-};

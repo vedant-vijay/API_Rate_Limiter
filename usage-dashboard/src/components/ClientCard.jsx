@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, Copy, Trash2, Check, Calendar, TrendingUp } from 'lucide-react';
+import { useResponsive } from '../utils/useResponsive';
 
 export default function ClientCard({ client, onRefresh }) {
   const [showKey, setShowKey] = useState(false);
@@ -7,15 +8,16 @@ export default function ClientCard({ client, onRefresh }) {
   const [copied, setCopied] = useState(false);
   const [prevRequestCount, setPrevRequestCount] = useState(client.requestCount || 0);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 480);
   const API = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
-    console.log(`🔄 ClientCard Update - ${client.name}:`, {
-      requestCount: client.requestCount,
-      rateLimit: client.rateLimit,
-      percentage: percentage.toFixed(1) + '%'
-    });
-    
+    const handleResize = () => setIsMobile(window.innerWidth < 480);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
     const currentCount = client.requestCount || 0;
     if (currentCount !== prevRequestCount) {
       setIsUpdating(true);
@@ -84,11 +86,212 @@ export default function ClientCard({ client, onRefresh }) {
     });
   };
 
+  const styles = {
+    clientCard: {
+      backgroundColor: '#1a1a1a',
+      border: isUpdating ? '1px solid rgba(16, 185, 129, 0.5)' : '1px solid #2d2d2d',
+      borderRadius: '12px',
+      padding: isMobile ? '1rem' : '1.5rem',
+      transition: 'all 0.3s ease',
+      boxShadow: isUpdating ? '0 4px 12px rgba(16, 185, 129, 0.2)' : '0 4px 12px rgba(0, 0, 0, 0.3)',
+      position: 'relative',
+      overflow: 'hidden'
+    },
+    cardHeader: {
+      display: 'flex',
+      flexDirection: isMobile ? 'column' : 'row',
+      justifyContent: 'space-between',
+      alignItems: isMobile ? 'flex-start' : 'flex-start',
+      marginBottom: '1.5rem',
+      gap: isMobile ? '0.75rem' : '1rem'
+    },
+    headerLeft: {
+      flex: 1,
+      width: isMobile ? '100%' : 'auto'
+    },
+    headerRight: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.75rem',
+      width: isMobile ? '100%' : 'auto',
+      justifyContent: isMobile ? 'space-between' : 'flex-end'
+    },
+    cardTitle: {
+      fontSize: isMobile ? '1.1rem' : '1.25rem',
+      fontWeight: '600',
+      margin: '0 0 0.5rem 0',
+      color: '#e5e7eb',
+      wordBreak: 'break-word'
+    },
+    metaInfo: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      fontSize: '0.75rem',
+      color: '#6b7280'
+    },
+    statusBadge: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.375rem',
+      padding: '0.375rem 0.75rem',
+      borderRadius: '6px',
+      fontSize: '0.75rem',
+      fontWeight: '600',
+      border: '1px solid currentColor'
+    },
+    deleteBtn: {
+      padding: '0.5rem',
+      backgroundColor: 'rgba(239, 68, 68, 0.1)',
+      color: '#ef4444',
+      border: '1px solid rgba(239, 68, 68, 0.3)',
+      borderRadius: '6px',
+      cursor: 'pointer',
+      transition: 'all 0.3s ease',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minWidth: '36px',
+      minHeight: '36px'
+    },
+    miniLoader: {
+      width: '16px',
+      height: '16px',
+      border: '2px solid rgba(239, 68, 68, 0.3)',
+      borderTop: '2px solid #ef4444',
+      borderRadius: '50%',
+      animation: 'spin 0.8s linear infinite'
+    },
+    keySection: {
+      marginBottom: '1.5rem',
+      padding: '1rem',
+      backgroundColor: '#0f0f0f',
+      borderRadius: '8px',
+      border: '1px solid #1f1f1f'
+    },
+    keyDisplayRow: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      marginTop: '0.5rem',
+      flexWrap: isMobile ? 'wrap' : 'nowrap'
+    },
+    maskedKey: {
+      flex: 1,
+      width: isMobile ? '100%' : 'auto',
+      padding: isMobile ? '0.625rem' : '0.75rem',
+      backgroundColor: '#0a0a0a',
+      border: '1px solid #2d2d2d',
+      borderRadius: '6px',
+      fontSize: isMobile ? '0.75rem' : '0.875rem',
+      fontFamily: 'monospace',
+      color: '#9ca3af',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap'
+    },
+    iconBtn: {
+      padding: '0.75rem',
+      backgroundColor: '#1f1f1f',
+      color: '#9ca3af',
+      border: '1px solid #374151',
+      borderRadius: '6px',
+      cursor: 'pointer',
+      transition: 'all 0.3s ease',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minWidth: '42px',
+      minHeight: '42px'
+    },
+    iconBtnSuccess: {
+      backgroundColor: 'rgba(16, 185, 129, 0.1)',
+      color: '#10b981',
+      border: '1px solid rgba(16, 185, 129, 0.3)'
+    },
+    usageSection: {
+      marginTop: '1rem'
+    },
+    usageHeader: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '0.75rem'
+    },
+    usageText: {
+      fontSize: '0.875rem',
+      color: isUpdating ? '#10b981' : '#e5e7eb',
+      fontWeight: '600',
+      fontFamily: 'monospace',
+      transition: 'all 0.3s ease',
+      transform: isUpdating ? 'scale(1.05)' : 'scale(1)'
+    },
+    label: {
+      display: 'block',
+      fontSize: '0.75rem',
+      fontWeight: '600',
+      color: '#9ca3af',
+      textTransform: 'uppercase',
+      letterSpacing: '0.05em'
+    },
+    progressBar: {
+      height: '10px',
+      backgroundColor: '#1f1f1f',
+      borderRadius: '5px',
+      overflow: 'hidden',
+      marginBottom: '1rem',
+      border: '1px solid #2d2d2d'
+    },
+    progressFill: {
+      height: '100%',
+      width: `${Math.min(percentage, 100)}%`,
+      backgroundColor: getStatusColor(),
+      borderRadius: '4px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      transition: 'width 0.8s ease, background-color 0.3s ease'
+    },
+    progressLabel: {
+      fontSize: '0.65rem',
+      fontWeight: '700',
+      color: 'white',
+      textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)'
+    },
+    usageStats: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: isMobile ? '0.75rem' : '1rem'
+    },
+    stat: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.375rem',
+      padding: '0.75rem',
+      backgroundColor: 'rgba(255, 255, 255, 0.02)',
+      borderRadius: '6px',
+      border: '1px solid #1f1f1f'
+    },
+    statLabel: {
+      fontSize: '0.7rem',
+      color: '#6b7280',
+      textTransform: 'uppercase',
+      fontWeight: '600',
+      letterSpacing: '0.05em'
+    },
+    statValue: {
+      fontSize: isMobile ? '1.25rem' : '1.5rem',
+      fontWeight: '700',
+      color: '#e5e7eb',
+      fontFamily: 'monospace',
+      transition: 'all 0.3s ease',
+      transform: isUpdating ? 'scale(1.1)' : 'scale(1)'
+    }
+  };
+
   return (
-    <div style={{
-      ...styles.clientCard,
-      ...(isUpdating ? styles.clientCardUpdating : {})
-    }}>
+    <div style={styles.clientCard}>
       <div style={styles.cardHeader}>
         <div style={styles.headerLeft}>
           <h3 style={styles.cardTitle}>{client.name}</h3>
@@ -143,23 +346,13 @@ export default function ClientCard({ client, onRefresh }) {
       <div style={styles.usageSection}>
         <div style={styles.usageHeader}>
           <span style={styles.label}>Rate Limit Usage</span>
-          <span style={{
-            ...styles.usageText,
-            ...(isUpdating ? styles.usageTextUpdating : {})
-          }}>
+          <span style={styles.usageText}>
             {used.toLocaleString()} / {limit.toLocaleString()}
           </span>
         </div>
         
         <div style={styles.progressBar}>
-          <div 
-            style={{
-              ...styles.progressFill,
-              width: `${Math.min(percentage, 100)}%`,
-              backgroundColor: getStatusColor(),
-              transition: 'width 0.8s ease, background-color 0.3s ease'
-            }}
-          >
+          <div style={styles.progressFill}>
             {percentage >= 15 && (
               <span style={styles.progressLabel}>
                 {percentage.toFixed(1)}%
@@ -173,8 +366,7 @@ export default function ClientCard({ client, onRefresh }) {
             <span style={styles.statLabel}>Remaining</span>
             <span style={{
               ...styles.statValue, 
-              color: remaining === 0 ? '#ef4444' : '#10b981',
-              ...(isUpdating ? styles.statValueUpdating : {})
+              color: remaining === 0 ? '#ef4444' : '#10b981'
             }}>
               {remaining.toLocaleString()}
             </span>
@@ -183,8 +375,7 @@ export default function ClientCard({ client, onRefresh }) {
             <span style={styles.statLabel}>Utilization</span>
             <span style={{
               ...styles.statValue, 
-              color: getStatusColor(),
-              ...(isUpdating ? styles.statValueUpdating : {})
+              color: getStatusColor()
             }}>
               {percentage.toFixed(1)}%
             </span>
@@ -194,220 +385,3 @@ export default function ClientCard({ client, onRefresh }) {
     </div>
   );
 }
-
-const styles = {
-  clientCard: {
-    backgroundColor: '#1a1a1a',
-    border: '1px solid #2d2d2d',
-    borderRadius: '12px',
-    padding: '1.5rem',
-    transition: 'all 0.3s ease',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-    position: 'relative',
-    overflow: 'hidden'
-  },
-  clientCardUpdating: {
-    border: '1px solid rgba(16, 185, 129, 0.5)',
-    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.2)'
-  },
-  cardHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: '1.5rem',
-    gap: '1rem'
-  },
-  headerLeft: {
-    flex: 1
-  },
-  headerRight: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem'
-  },
-  cardTitle: {
-    fontSize: '1.25rem',
-    fontWeight: '600',
-    margin: '0 0 0.5rem 0',
-    color: '#e5e7eb',
-    wordBreak: 'break-word'
-  },
-  metaInfo: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    fontSize: '0.75rem',
-    color: '#6b7280'
-  },
-  statusBadge: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.375rem',
-    padding: '0.375rem 0.75rem',
-    borderRadius: '6px',
-    fontSize: '0.75rem',
-    fontWeight: '600',
-    border: '1px solid currentColor'
-  },
-  deleteBtn: {
-    padding: '0.5rem',
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-    color: '#ef4444',
-    border: '1px solid rgba(239, 68, 68, 0.3)',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: '36px',
-    minHeight: '36px'
-  },
-  miniLoader: {
-    width: '16px',
-    height: '16px',
-    border: '2px solid rgba(239, 68, 68, 0.3)',
-    borderTop: '2px solid #ef4444',
-    borderRadius: '50%',
-    animation: 'spin 0.8s linear infinite'
-  },
-  keySection: {
-    marginBottom: '1.5rem',
-    padding: '1rem',
-    backgroundColor: '#0f0f0f',
-    borderRadius: '8px',
-    border: '1px solid #1f1f1f'
-  },
-  keyDisplayRow: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    marginTop: '0.5rem'
-  },
-  maskedKey: {
-    flex: 1,
-    padding: '0.75rem',
-    backgroundColor: '#0a0a0a',
-    border: '1px solid #2d2d2d',
-    borderRadius: '6px',
-    fontSize: '0.875rem',
-    fontFamily: 'monospace',
-    color: '#9ca3af',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap'
-  },
-  iconBtn: {
-    padding: '0.75rem',
-    backgroundColor: '#1f1f1f',
-    color: '#9ca3af',
-    border: '1px solid #374151',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: '42px',
-    minHeight: '42px'
-  },
-  iconBtnSuccess: {
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-    color: '#10b981',
-    border: '1px solid rgba(16, 185, 129, 0.3)'
-  },
-  usageSection: {
-    marginTop: '1rem'
-  },
-  usageHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '0.75rem'
-  },
-  usageText: {
-    fontSize: '0.875rem',
-    color: '#e5e7eb',
-    fontWeight: '600',
-    fontFamily: 'monospace',
-    transition: 'all 0.3s ease'
-  },
-  usageTextUpdating: {
-    color: '#10b981',
-    transform: 'scale(1.05)'
-  },
-  label: {
-    display: 'block',
-    fontSize: '0.75rem',
-    fontWeight: '600',
-    color: '#9ca3af',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em'
-  },
-  progressBar: {
-    height: '10px',
-    backgroundColor: '#1f1f1f',
-    borderRadius: '5px',
-    overflow: 'hidden',
-    marginBottom: '1rem',
-    border: '1px solid #2d2d2d'
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: '4px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative'
-  },
-  progressLabel: {
-    fontSize: '0.65rem',
-    fontWeight: '700',
-    color: 'white',
-    textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)'
-  },
-  usageStats: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '1rem'
-  },
-  stat: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.375rem',
-    padding: '0.75rem',
-    backgroundColor: 'rgba(255, 255, 255, 0.02)',
-    borderRadius: '6px',
-    border: '1px solid #1f1f1f'
-  },
-  statLabel: {
-    fontSize: '0.7rem',
-    color: '#6b7280',
-    textTransform: 'uppercase',
-    fontWeight: '600',
-    letterSpacing: '0.05em'
-  },
-  statValue: {
-    fontSize: '1.5rem',
-    fontWeight: '700',
-    color: '#e5e7eb',
-    fontFamily: 'monospace',
-    transition: 'all 0.3s ease'
-  },
-  statValueUpdating: {
-    transform: 'scale(1.1)',
-    color: '#10b981'
-  },
-  debugInfo: {
-    marginTop: '1rem',
-    padding: '0.5rem',
-    backgroundColor: 'rgba(99, 102, 241, 0.1)',
-    borderRadius: '6px',
-    border: '1px solid rgba(99, 102, 241, 0.2)'
-  },
-  debugText: {
-    color: '#9ca3af',
-    fontSize: '0.75rem',
-    fontFamily: 'monospace'
-  }
-};

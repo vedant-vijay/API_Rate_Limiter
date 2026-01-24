@@ -9,12 +9,17 @@ import ApiTester from './components/ApiTester';
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('keys');
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       setIsAuthenticated(true);
     }
+    
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const handleLogin = (token, user) => {
@@ -27,6 +32,27 @@ export default function App() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setIsAuthenticated(false);
+  };
+
+  const getPadding = () => {
+    if (windowWidth < 480) return '1rem';
+    if (windowWidth < 768) return '1.5rem';
+    return '2rem';
+  };
+
+  const styles = {
+    app: {
+      minHeight: '100vh',
+      backgroundColor: '#0a0a0a',
+      color: '#e5e7eb',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    },
+    main: {
+      maxWidth: '1400px',
+      margin: '0 auto',
+      padding: getPadding(),
+      animation: 'fadeIn 0.5s ease'
+    }
   };
 
   if (!isAuthenticated) {
@@ -45,18 +71,3 @@ export default function App() {
     </div>
   );
 }
-
-const styles = {
-  app: {
-    minHeight: '100vh',
-    backgroundColor: '#0a0a0a',
-    color: '#e5e7eb',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-  },
-  main: {
-    maxWidth: '1400px',
-    margin: '0 auto',
-    padding: '2rem',
-    animation: 'fadeIn 0.5s ease'
-  }
-};

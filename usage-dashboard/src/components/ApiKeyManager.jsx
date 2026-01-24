@@ -12,6 +12,18 @@ export default function ApiKeyManager() {
   const refreshIntervalRef = useRef(null);
   const API = import.meta.env.VITE_API_BASE_URL;
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 480);
+  const [isTablet, setIsTablet] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 480);
+      setIsTablet(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   useEffect(() => {
     fetchClients();
     
@@ -69,7 +81,169 @@ export default function ApiKeyManager() {
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
     return lastRefresh.toLocaleTimeString();
   };
-
+  const styles = {
+    section: {
+      animation: 'fadeIn 0.6s ease'
+    },
+    sectionHeader: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: '2rem',
+      flexWrap: 'wrap',
+      gap: isMobile ? '1rem' : '1.5rem'
+    },
+    sectionTitle: {
+      fontSize: isMobile ? '1.5rem' : (isTablet ? '1.75rem' : '2rem'),
+      fontWeight: 'bold',
+      margin: '0 0 0.5rem 0',
+      background: 'linear-gradient(135deg, #e5e7eb 0%, #9ca3af 100%)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent'
+    },
+    sectionSubtitle: {
+      color: '#6b7280',
+      margin: 0,
+      fontSize: '0.95rem'
+    },
+    lastRefreshText: {
+      color: '#10b981',
+      fontSize: '0.875rem',
+      fontWeight: '600'
+    },
+    headerActions: {
+      display: 'flex',
+      gap: '0.75rem',
+      alignItems: 'center',
+      flexDirection: isMobile ? 'column' : 'row',
+      width: isMobile ? '100%' : 'auto'
+    },
+    refreshBtn: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '0.75rem 1.25rem',
+      backgroundColor: '#1f1f1f',
+      color: '#9ca3af',
+      border: '1px solid #374151',
+      borderRadius: '8px',
+      cursor: 'pointer',
+      fontSize: '0.875rem',
+      fontWeight: '600',
+      transition: 'all 0.3s ease',
+      width: isMobile ? '100%' : 'auto',
+      justifyContent: 'center'
+    },
+    primaryBtn: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '0.75rem 1.5rem',
+      background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+      color: 'white',
+      border: 'none',
+      borderRadius: '8px',
+      cursor: 'pointer',
+      fontSize: '0.875rem',
+      fontWeight: '600',
+      transition: 'all 0.3s ease',
+      boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
+      width: isMobile ? '100%' : 'auto',
+      justifyContent: 'center'
+    },
+    statsBar: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: '1rem',
+      marginBottom: '2rem'
+    },
+    statCard: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.5rem',
+      padding: '1.5rem',
+      backgroundColor: '#1a1a1a',
+      border: '1px solid #2d2d2d',
+      borderRadius: '12px'
+    },
+    statLabel: {
+      fontSize: '0.875rem',
+      color: '#6b7280',
+      fontWeight: '500'
+    },
+    statValue: {
+      fontSize: '2rem',
+      fontWeight: '700',
+      color: '#e5e7eb'
+    },
+    loadingContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '4rem',
+      gap: '1rem'
+    },
+    spinner: {
+      width: '48px',
+      height: '48px',
+      border: '4px solid #1f1f1f',
+      borderTop: '4px solid #6366f1',
+      borderRadius: '50%',
+      animation: 'spin 1s linear infinite'
+    },
+    loadingText: {
+      color: '#9ca3af',
+      fontSize: '0.95rem'
+    },
+    emptyState: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      padding: isMobile ? '2rem 1rem' : '4rem 2rem',
+      textAlign: 'center',
+      backgroundColor: '#1a1a1a',
+      border: '2px dashed #2d2d2d',
+      borderRadius: '16px'
+    },
+    emptyIcon: {
+      padding: '1.5rem',
+      backgroundColor: 'rgba(99, 102, 241, 0.1)',
+      borderRadius: '20px',
+      marginBottom: '1.5rem'
+    },
+    emptyTitle: {
+      fontSize: '1.5rem',
+      fontWeight: '600',
+      margin: '0 0 0.5rem 0',
+      color: '#e5e7eb'
+    },
+    emptyText: {
+      color: '#6b7280',
+      margin: '0 0 2rem 0',
+      maxWidth: '400px'
+    },
+    emptyButton: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '0.875rem 1.75rem',
+      background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+      color: 'white',
+      border: 'none',
+      borderRadius: '8px',
+      cursor: 'pointer',
+      fontSize: '0.95rem',
+      fontWeight: '600',
+      transition: 'all 0.3s ease',
+      boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
+    },
+    clientGrid: {
+      display: 'grid',
+      gridTemplateColumns: (isMobile || isTablet) ? '1fr' : 'repeat(auto-fill, minmax(400px, 1fr))',
+      gap: '1.5rem'
+    }
+  };
   return (
     <div style={styles.section}>
       <div style={styles.sectionHeader}>
@@ -170,160 +344,3 @@ export default function ApiKeyManager() {
   );
 }
 
-const styles = {
-  section: {
-    animation: 'fadeIn 0.6s ease'
-  },
-  sectionHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: '2rem',
-    flexWrap: 'wrap',
-    gap: '1.5rem'
-  },
-  sectionTitle: {
-    fontSize: '2rem',
-    fontWeight: 'bold',
-    margin: '0 0 0.5rem 0',
-    background: 'linear-gradient(135deg, #e5e7eb 0%, #9ca3af 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent'
-  },
-  sectionSubtitle: {
-    color: '#6b7280',
-    margin: 0,
-    fontSize: '0.95rem'
-  },
-  lastRefreshText: {
-    color: '#10b981',
-    fontSize: '0.875rem',
-    fontWeight: '600'
-  },
-  headerActions: {
-    display: 'flex',
-    gap: '0.75rem',
-    alignItems: 'center'
-  },
-  refreshBtn: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    padding: '0.75rem 1.25rem',
-    backgroundColor: '#1f1f1f',
-    color: '#9ca3af',
-    border: '1px solid #374151',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '0.875rem',
-    fontWeight: '600',
-    transition: 'all 0.3s ease'
-  },
-  primaryBtn: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    padding: '0.75rem 1.5rem',
-    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '0.875rem',
-    fontWeight: '600',
-    transition: 'all 0.3s ease',
-    boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
-  },
-  statsBar: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '1rem',
-    marginBottom: '2rem'
-  },
-  statCard: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-    padding: '1.5rem',
-    backgroundColor: '#1a1a1a',
-    border: '1px solid #2d2d2d',
-    borderRadius: '12px'
-  },
-  statLabel: {
-    fontSize: '0.875rem',
-    color: '#6b7280',
-    fontWeight: '500'
-  },
-  statValue: {
-    fontSize: '2rem',
-    fontWeight: '700',
-    color: '#e5e7eb'
-  },
-  loadingContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '4rem',
-    gap: '1rem'
-  },
-  spinner: {
-    width: '48px',
-    height: '48px',
-    border: '4px solid #1f1f1f',
-    borderTop: '4px solid #6366f1',
-    borderRadius: '50%',
-    animation: 'spin 1s linear infinite'
-  },
-  loadingText: {
-    color: '#9ca3af',
-    fontSize: '0.95rem'
-  },
-  emptyState: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '4rem 2rem',
-    textAlign: 'center',
-    backgroundColor: '#1a1a1a',
-    border: '2px dashed #2d2d2d',
-    borderRadius: '16px'
-  },
-  emptyIcon: {
-    padding: '1.5rem',
-    backgroundColor: 'rgba(99, 102, 241, 0.1)',
-    borderRadius: '20px',
-    marginBottom: '1.5rem'
-  },
-  emptyTitle: {
-    fontSize: '1.5rem',
-    fontWeight: '600',
-    margin: '0 0 0.5rem 0',
-    color: '#e5e7eb'
-  },
-  emptyText: {
-    color: '#6b7280',
-    margin: '0 0 2rem 0',
-    maxWidth: '400px'
-  },
-  emptyButton: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    padding: '0.875rem 1.75rem',
-    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '0.95rem',
-    fontWeight: '600',
-    transition: 'all 0.3s ease',
-    boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
-  },
-  clientGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
-    gap: '1.5rem'
-  }
-};
