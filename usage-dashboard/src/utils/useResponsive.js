@@ -1,5 +1,3 @@
-// hooks/useResponsive.js
-// Create this file and import it in all your components
 import { useState, useEffect } from 'react';
 
 export function useResponsive() {
