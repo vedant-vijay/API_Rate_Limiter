@@ -1,7 +1,5 @@
-//CreateApiKeyForm.jsx
 import React, { useState, useEffect } from 'react';
 import { Copy, Check, X, Sparkles } from 'lucide-react';
-
 
 export default function CreateApiKeyForm({ onSuccess, onCancel }) {
   const [name, setName] = useState('');
@@ -365,8 +363,6 @@ export default function CreateApiKeyForm({ onSuccess, onCancel }) {
       setError('Network error. Please try again.');
       setLoading(false);
     }
-
-
 
   };
 
