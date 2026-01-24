@@ -1,7 +1,5 @@
-//ApiTester.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { TestTube, BarChart3, Play, Loader, ChevronDown } from 'lucide-react';
-
 
 export default function ApiTester() {
   const [apiKey, setApiKey] = useState('');
