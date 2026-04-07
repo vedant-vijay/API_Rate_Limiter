@@ -966,13 +966,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Rate Limiting Best Practices](https://cloud.google.com/architecture/rate-limiting-strategies-techniques)
 
 ---
-
-<div align="center">
-
-**Built with ❤️ for learning, demonstration, and production use**
-
-⭐ Star this repo if you found it helpful!
-
-[Report Bug](https://github.com/yourusername/api-gateway-dashboard/issues) • [Request Feature](https://github.com/yourusername/api-gateway-dashboard/issues)
-
-</div>
